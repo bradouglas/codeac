@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://oprix.co.uk/sitemap.xml

@@ -1,0 +1,152 @@
+/* Google Fonts — loaded at runtime by the browser */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  /* Brand colours */
+  --color-green-primary: #1DB954;
+  --color-green-dark: #0D7A3A;
+  --color-orange: #F27A1A;
+  --color-dark: #111111;
+  --color-charcoal: #2A2A2A;
+  --color-grey: #6B7280;
+  --color-light-grey: #E5E7EB;
+  --color-cream: #FAFAF7;
+
+  /* Typography — loaded via @import from Google Fonts above */
+  --font-heading: 'DM Sans', system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* Border radius */
+  --radius-card: 14px;
+  --radius-card-lg: 20px;
+
+  /* Shadows */
+  --shadow-card: 0 2px 16px 0 rgba(0,0,0,0.07);
+  --shadow-card-hover: 0 8px 32px 0 rgba(0,0,0,0.12);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--color-charcoal);
+    background-color: var(--color-cream);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--color-dark);
+  }
+}
+
+@layer components {
+  .btn-orange {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: var(--color-orange);
+    color: white;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    transition: all 200ms;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-orange:hover {
+    background-color: color-mix(in srgb, var(--color-orange) 90%, black);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+  }
+  .btn-orange:focus {
+    outline: 2px solid var(--color-orange);
+    outline-offset: 2px;
+  }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 2px solid var(--color-green-primary);
+    color: var(--color-green-primary);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    transition: all 200ms;
+    text-decoration: none;
+    background: transparent;
+    cursor: pointer;
+  }
+  .btn-outline:hover {
+    background-color: var(--color-green-primary);
+    color: white;
+  }
+  .btn-outline:focus {
+    outline: 2px solid var(--color-green-primary);
+    outline-offset: 2px;
+  }
+
+  .btn-outline-white {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 2px solid white;
+    color: white;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    transition: all 200ms;
+    text-decoration: none;
+    background: transparent;
+    cursor: pointer;
+  }
+  .btn-outline-white:hover {
+    background-color: white;
+    color: var(--color-dark);
+  }
+
+  .section-pad {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+
+  .container-pad {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container-pad {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+    .section-pad {
+      padding-top: 7rem;
+      padding-bottom: 7rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-pad {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+}
