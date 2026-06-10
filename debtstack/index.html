@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DebtStack — Advice Practice Acquisition Modeller</title>
+<link rel="stylesheet" href="css/styles.css">
+<script src="js/vendor-chart.umd.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">DS</span>
+    <div>
+      <h1>DebtStack</h1>
+      <p>Advice practice acquisition &amp; debt facility modeller</p>
+    </div>
+  </div>
+  <div class="scenario-bar">
+    <select id="scenarioSelect" title="Saved scenarios"></select>
+    <input id="scenarioName" type="text" placeholder="Scenario name" autocomplete="off">
+    <button id="btnNew" class="btn" title="Start a fresh scenario">New</button>
+    <button id="btnDuplicate" class="btn" title="Copy this scenario">Duplicate</button>
+    <button id="btnDelete" class="btn btn-danger" title="Delete this scenario">Delete</button>
+    <button id="btnExport" class="btn" title="Download scenario as JSON">Export</button>
+    <label class="btn" for="importFile" title="Load a scenario JSON file">Import<input id="importFile" type="file" accept=".json" hidden></label>
+  </div>
+</header>
+
+<div id="warnings" class="warnings hidden"></div>
+
+<section class="kpis" id="kpis"></section>
+
+<main class="layout">
+
+  <!-- ======================= INPUTS ======================= -->
+  <aside class="inputs">
+
+    <details class="card" open>
+      <summary>1 &middot; The business you're buying</summary>
+      <div class="card-body">
+        <label class="field">
+          <span>Recurring revenue (p.a.) <i class="hint" title="Annual ongoing advice fees of the target book or practice">?</i></span>
+          <input type="number" data-path="acquisition.recurringRevenue" min="0" step="10000">
+        </label>
+        <label class="field">
+          <span>Valuation multiple (&times; recurring revenue) <i class="hint" title="Advice books typically trade at 2.0x–3.5x recurring revenue">?</i></span>
+          <input type="number" data-path="acquisition.revenueMultiple" min="0" step="0.1">
+        </label>
+        <div class="derived">Purchase price <strong id="derivedPrice">—</strong></div>
+      </div>
+    </details>
+
+    <details class="card" open>
+      <summary>2 &middot; How you pay for it</summary>
+      <div class="card-body">
+        <p class="explain">Most advice deals are paid over 2–3 years. Set each payment, when it falls due, and how much of it is borrowed.</p>
+        <table class="tranche-table" id="trancheTable">
+          <thead>
+            <tr><th>Payment</th><th>% of price</th><th>Month due</th><th>% debt funded</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <button id="btnAddTranche" class="btn btn-small">+ Add payment</button>
+        <label class="field checkbox">
+          <input type="checkbox" data-path="acquisition.retentionAdjusted">
+          <span>Adjust deferred payments for client attrition <i class="hint" title="Deferred tranches reduce in line with revenue retained — the usual clawback protection in advice deals">?</i></span>
+        </label>
+      </div>
+    </details>
+
+    <details class="card" open>
+      <summary>3 &middot; Debt facility</summary>
+      <div class="card-body">
+        <p class="explain">Each payment's borrowed portion is drawn as a tranche on these terms.</p>
+        <label class="field">
+          <span>Interest rate (% p.a.)</span>
+          <input type="number" data-path="facility.interestRate" min="0" step="0.05">
+        </label>
+        <label class="field">
+          <span>Term per drawdown (years)</span>
+          <input type="number" data-path="facility.termYears" min="1" step="1">
+        </label>
+        <label class="field">
+          <span>Interest-only period (months)</span>
+          <input type="number" data-path="facility.interestOnlyMonths" min="0" step="1">
+        </label>
+        <label class="field">
+          <span>Establishment fee (% of drawdown, capitalised)</span>
+          <input type="number" data-path="facility.establishmentFeePct" min="0" step="0.1">
+        </label>
+      </div>
+    </details>
+
+    <details class="card" open>
+      <summary>4 &middot; Running the book</summary>
+      <div class="card-body">
+        <label class="field">
+          <span>Year-1 net attrition (%) <i class="hint" title="Revenue typically dips in the first year after completion as some clients leave">?</i></span>
+          <input type="number" data-path="operating.attritionYear1" step="0.5">
+        </label>
+        <label class="field">
+          <span>Net growth thereafter (% p.a.)</span>
+          <input type="number" data-path="operating.growthAfterYear1" step="0.5">
+        </label>
+        <label class="field">
+          <span>EBITDA margin (%) <i class="hint" title="Share of acquired revenue left after the cost of servicing the clients">?</i></span>
+          <input type="number" data-path="operating.ebitdaMargin" min="0" max="100" step="1">
+        </label>
+        <label class="field">
+          <span>Tax rate (%)</span>
+          <input type="number" data-path="operating.taxRate" min="0" max="60" step="1">
+        </label>
+      </div>
+    </details>
+
+    <details class="card" open>
+      <summary>5 &middot; Exit</summary>
+      <div class="card-body">
+        <label class="field">
+          <span>Exit at end of year</span>
+          <input type="number" data-path="exit.year" min="1" max="20" step="1">
+        </label>
+        <label class="field">
+          <span>Exit multiple basis</span>
+          <select data-path="exit.basis">
+            <option value="revenue">Recurring revenue</option>
+            <option value="ebitda">EBITDA</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Exit multiple (&times;)</span>
+          <input type="number" data-path="exit.multiple" min="0" step="0.1">
+        </label>
+        <label class="field">
+          <span>Sale costs (% of gross price)</span>
+          <input type="number" data-path="exit.saleCostsPct" min="0" step="0.5">
+        </label>
+      </div>
+    </details>
+
+  </aside>
+
+  <!-- ======================= OUTPUTS ======================= -->
+  <section class="outputs">
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-tab="overview">Overview</button>
+      <button class="tab" data-tab="cashflows">Annual cashflows</button>
+      <button class="tab" data-tab="debt">Debt schedule</button>
+      <button class="tab" data-tab="exit">Exit modelling</button>
+    </nav>
+
+    <div class="tab-panel active" id="panel-overview">
+      <div class="chart-card">
+        <h3>Debt balance vs cumulative equity cashflow</h3>
+        <canvas id="chartDebt"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Annual cashflow: where the EBITDA goes</h3>
+        <canvas id="chartCashflow"></canvas>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-cashflows">
+      <div class="table-card">
+        <h3>Annual summary</h3>
+        <div class="table-scroll"><table class="data-table" id="annualTable"></table></div>
+        <p class="footnote">Tax is applied to EBITDA less interest. Amortisation of the acquired client book is ignored for simplicity, which is conservative on cash tax.</p>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-debt">
+      <div class="table-card">
+        <h3>Consideration &amp; funding by payment</h3>
+        <div class="table-scroll"><table class="data-table" id="trancheSummaryTable"></table></div>
+      </div>
+      <div class="table-card">
+        <h3>Facility drawdowns &amp; amortisation (annual)</h3>
+        <div class="table-scroll"><table class="data-table" id="debtTable"></table></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-exit">
+      <section class="kpis kpis-exit" id="exitKpis"></section>
+      <div class="chart-card">
+        <h3>Exit waterfall: gross price to net proceeds</h3>
+        <canvas id="chartWaterfall"></canvas>
+      </div>
+      <div class="table-card">
+        <h3>Equity IRR sensitivity — exit year &times; exit multiple</h3>
+        <div class="table-scroll"><table class="data-table sens-table" id="sensTable"></table></div>
+        <p class="footnote">Each cell is the annualised equity IRR (MOIC below). The boxed cell is your current assumption.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  DebtStack — indicative modelling only, not financial or credit advice. All figures pre any book amortisation tax benefit.
+</footer>
+
+<script src="js/model.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
